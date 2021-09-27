@@ -69,10 +69,50 @@ vector<int> LinuxParser::Pids() {
 }
 
 // TODO: Read and return the system memory utilization
-float LinuxParser::MemoryUtilization() { return 0.0; }
+float LinuxParser::MemoryUtilization() { 
+  string mem_total_key = "MemTotal";
+  string mem_free_key = "MemFree";
+
+  float total, free;
+
+  std::ifstream filestream(kMeminfoFilename);
+  if (filestream.is_open()) {
+    string line;
+
+    while (std::getline(filestream, line)) {
+      std::istringstream linestream(line);
+      string key;
+      linestream >> key;
+
+      if (key == mem_free_key) {
+        linestream >> free;
+        
+      }
+      else if (key == mem_total_key) {
+        linestream >> total;
+      }
+    }
+
+    return (total - free) / total;
+  }
+
+  return 0;
+ }
 
 // TODO: Read and return the system uptime
-long LinuxParser::UpTime() { return 0; }
+long LinuxParser::UpTime() { 
+  long uptime;
+  string line;
+
+  std::ifstream filestream(kProcDirectory + kUptimeFilename);
+    if (filestream.is_open()) {
+      filestream >> uptime;
+      return uptime;
+    }
+  
+
+  return 0;
+}
 
 // TODO: Read and return the number of jiffies for the system
 long LinuxParser::Jiffies() { 
@@ -104,8 +144,28 @@ long LinuxParser::Jiffies() {
  }
 
 // TODO: Read and return the number of active jiffies for a PID
-// REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
+long LinuxParser::ActiveJiffies(int pid) { 
+  string line;
+  string dump;
+  long utime, stime, cutime, cstime;
+  std::ifstream filestream(kProcDirectory + to_string(pid) + kStatFilename);
+
+  if (filestream.is_open()) {
+    while (std::getline(filestream, line)) {
+      std::istringstream linestream(line);
+      for( int i = 0; i < 13; i++) {
+        linestream >> dump;
+      }
+      linestream >> utime >> stime >> cutime >> cstime;
+      long total = utime + stime + cutime + cstime;
+      return total;
+    }
+  }
+
+  return 0;
+
+
+ }
 
 // TODO: Read and return the number of active jiffies for the system
 long LinuxParser::ActiveJiffies() { 
