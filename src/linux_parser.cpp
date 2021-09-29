@@ -264,7 +264,7 @@ string LinuxParser::Command(int pid) {
 
 string LinuxParser::Ram(int pid) { 
   string ram;
-  std::ifstream filestream(kProcDirectory + std::to_string(pid) + kStatFilename);
+  std::ifstream filestream(kProcDirectory + std::to_string(pid) + kStatusFilename);
 
   if (filestream.is_open()) {
     string line;
@@ -274,9 +274,10 @@ string LinuxParser::Ram(int pid) {
       string key;
       linestream >> key;
 
-      if (key == "VmSize") {
+      if (key == "VmSize:") {
         linestream >> ram;
-        return ram;
+        int mb = std::stoi(ram) / 1000;
+        return std::to_string(mb);
       }
     }
   }
@@ -286,7 +287,7 @@ string LinuxParser::Ram(int pid) {
 
 // TODO: Read and return the user ID associated with a process
 string LinuxParser::Uid(int pid) { 
-  std::ifstream filestream(kProcDirectory + std::to_string(pid) + kStatFilename);
+  std::ifstream filestream(kProcDirectory + std::to_string(pid) + kStatusFilename);
 
   if (filestream.is_open()) {
     string line;
@@ -297,7 +298,7 @@ string LinuxParser::Uid(int pid) {
       string key;
       linestream >> key;
 
-      if (key == "Uid") {
+      if (key == "Uid:") {
         linestream >> uid;
         return uid;
       }

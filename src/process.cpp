@@ -12,15 +12,16 @@ using std::to_string;
 using std::vector;
 
 // TODO: Return this process's ID
-int Process::Pid() { 
+int Process::Pid() const { 
     return pid_;
  }
 
 // TODO: Return this process's CPU utilization
-float Process::CpuUtilization() { 
+float Process::CpuUtilization() const { 
     float total = LinuxParser::ActiveJiffies(Pid());
-    float active = UpTime();
+    float active = this->Process::UpTime();
     float cpu = (total / sysconf(_SC_CLK_TCK)) / active;
+
     return cpu;
 }
 
@@ -40,12 +41,12 @@ string Process::User() {
  }
 
 // TODO: Return the age of this process (in seconds)
-long int Process::UpTime() { 
+long int Process::UpTime() const { 
     return LinuxParser::UpTime(Pid());
  }
 
 // TODO: Overload the "less than" comparison operator for Process objects
-bool Process::operator<(Process & a)  { 
-    return (CpuUtilization() < a.CpuUtilization());
+bool Process::operator<(Process const& a) const  { 
+    return (a.CpuUtilization() < CpuUtilization());
 
  }
