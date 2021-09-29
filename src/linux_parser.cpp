@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "linux_parser.h"
 
@@ -109,7 +110,6 @@ long LinuxParser::UpTime() {
       filestream >> uptime;
       return uptime;
     }
-  
 
   return 0;
 }
@@ -201,8 +201,8 @@ long LinuxParser::IdleJiffies() {
   return Jiffies() - ActiveJiffies(); }
 
 // TODO: Read and return CPU utilization
-long LinuxParser::CpuUtilization() { 
-  return (float)ActiveJiffies() / Jiffies();
+float LinuxParser::CpuUtilization() { 
+  return (float)ActiveJiffies() / (float)Jiffies();
   }
 
 // TODO: Read and return the total number of processes
